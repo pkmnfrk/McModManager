@@ -44,6 +44,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libraries\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -128,6 +130,7 @@
     <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
     <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
     <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
+    <Compile Include="SqlMapper.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

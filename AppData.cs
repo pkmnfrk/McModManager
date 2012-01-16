@@ -49,7 +49,6 @@ namespace MCModManager {
             //minecraft.jar is special, so lets load it now
             Mods.Add("base:minecraft".ID(), new Mod("base_manifests/minecraft.xml"));
             
-
         }
     }
 }
