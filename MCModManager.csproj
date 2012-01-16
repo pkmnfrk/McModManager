@@ -36,6 +36,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -48,78 +50,130 @@
   <ItemGroup>
     <Compile Include="AppData.cs" />
     <Compile Include="Archive.cs" />
-    <Compile Include="BZip2\BZip2.cs" />
-    <Compile Include="BZip2\BZip2Constants.cs" />
-    <Compile Include="BZip2\BZip2Exception.cs" />
-    <Compile Include="BZip2\BZip2InputStream.cs" />
-    <Compile Include="BZip2\BZip2OutputStream.cs" />
-    <Compile Include="Checksums\Adler32.cs" />
-    <Compile Include="Checksums\CRC32.cs" />
-    <Compile Include="Checksums\IChecksum.cs" />
-    <Compile Include="Checksums\StrangeCRC.cs" />
-    <Compile Include="Core\FileSystemScanner.cs" />
-    <Compile Include="Core\INameTransform.cs" />
-    <Compile Include="Core\IScanFilter.cs" />
-    <Compile Include="Core\NameFilter.cs" />
-    <Compile Include="Core\PathFilter.cs" />
-    <Compile Include="Core\StreamUtils.cs" />
-    <Compile Include="Core\WindowsPathUtils.cs" />
-    <Compile Include="Encryption\PkzipClassic.cs" />
-    <Compile Include="Encryption\ZipAESStream.cs" />
-    <Compile Include="Encryption\ZipAESTransform.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2Constants.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2Exception.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2InputStream.cs" />
+    <Compile Include="SharpZipLib\BZip2\BZip2OutputStream.cs" />
+    <Compile Include="SharpZipLib\Checksums\Adler32.cs" />
+    <Compile Include="SharpZipLib\Checksums\CRC32.cs" />
+    <Compile Include="SharpZipLib\Checksums\IChecksum.cs" />
+    <Compile Include="SharpZipLib\Checksums\StrangeCRC.cs" />
+    <Compile Include="SharpZipLib\Core\FileSystemScanner.cs" />
+    <Compile Include="SharpZipLib\Core\INameTransform.cs" />
+    <Compile Include="SharpZipLib\Core\IScanFilter.cs" />
+    <Compile Include="SharpZipLib\Core\NameFilter.cs" />
+    <Compile Include="SharpZipLib\Core\PathFilter.cs" />
+    <Compile Include="SharpZipLib\Core\StreamUtils.cs" />
+    <Compile Include="SharpZipLib\Core\WindowsPathUtils.cs" />
+    <Compile Include="SharpZipLib\Encryption\PkzipClassic.cs" />
+    <Compile Include="SharpZipLib\Encryption\ZipAESStream.cs" />
+    <Compile Include="SharpZipLib\Encryption\ZipAESTransform.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="GZip\GZIPConstants.cs" />
-    <Compile Include="GZip\GZipException.cs" />
-    <Compile Include="GZip\GzipInputStream.cs" />
-    <Compile Include="GZip\GzipOutputStream.cs" />
-    <Compile Include="Lzw\LzwConstants.cs" />
-    <Compile Include="Lzw\LzwException.cs" />
-    <Compile Include="Lzw\LzwInputStream.cs" />
+    <Compile Include="SharpZipLib\GZip\GZIPConstants.cs" />
+    <Compile Include="SharpZipLib\GZip\GZipException.cs" />
+    <Compile Include="SharpZipLib\GZip\GzipInputStream.cs" />
+    <Compile Include="SharpZipLib\GZip\GzipOutputStream.cs" />
+    <Compile Include="SharpZipLib\Lzw\LzwConstants.cs" />
+    <Compile Include="SharpZipLib\Lzw\LzwException.cs" />
+    <Compile Include="SharpZipLib\Lzw\LzwInputStream.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Manifest.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Core\SharpZipBaseException.cs" />
-    <Compile Include="Tar\InvalidHeaderException.cs" />
-    <Compile Include="Tar\TarArchive.cs" />
-    <Compile Include="Tar\TarBuffer.cs" />
-    <Compile Include="Tar\TarEntry.cs" />
-    <Compile Include="Tar\TarException.cs" />
-    <Compile Include="Tar\TarHeader.cs" />
-    <Compile Include="Tar\TarInputStream.cs" />
-    <Compile Include="Tar\TarOutputStream.cs" />
-    <Compile Include="Zip\Compression\Deflater.cs" />
-    <Compile Include="Zip\Compression\DeflaterConstants.cs" />
-    <Compile Include="Zip\Compression\DeflaterEngine.cs" />
-    <Compile Include="Zip\Compression\DeflaterHuffman.cs" />
-    <Compile Include="Zip\Compression\DeflaterPending.cs" />
-    <Compile Include="Zip\Compression\Inflater.cs" />
-    <Compile Include="Zip\Compression\InflaterDynHeader.cs" />
-    <Compile Include="Zip\Compression\InflaterHuffmanTree.cs" />
-    <Compile Include="Zip\Compression\PendingBuffer.cs" />
-    <Compile Include="Zip\Compression\Streams\DeflaterOutputStream.cs" />
-    <Compile Include="Zip\Compression\Streams\InflaterInputStream.cs" />
-    <Compile Include="Zip\Compression\Streams\OutputWindow.cs" />
-    <Compile Include="Zip\Compression\Streams\StreamManipulator.cs" />
-    <Compile Include="Zip\FastZip.cs" />
-    <Compile Include="Zip\IEntryFactory.cs" />
-    <Compile Include="Zip\WindowsNameTransform.cs" />
-    <Compile Include="Zip\ZipConstants.cs" />
-    <Compile Include="Zip\ZipEntry.cs" />
-    <Compile Include="Zip\ZipEntryFactory.cs" />
-    <Compile Include="Zip\ZipException.cs" />
-    <Compile Include="Zip\ZipExtraData.cs" />
-    <Compile Include="Zip\ZipFile.cs" />
-    <Compile Include="Zip\ZipHelperStream.cs" />
-    <Compile Include="Zip\ZipInputStream.cs" />
-    <Compile Include="Zip\ZipNameTransform.cs" />
-    <Compile Include="Zip\ZipOutputStream.cs" />
+    <Compile Include="SharpZipLib\Core\SharpZipBaseException.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\Properties\Resources.Designer.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\DmlSqlGenerator.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\ISqlFragment.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\JoinSymbol.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\MetadataHelpers.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\SqlBuilder.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\SqlChecker.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\SqlGenerator.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\SqlSelectStatement.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\SqlWriter.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\Symbol.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\SymbolPair.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\SymbolTable.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQL Generation\TopClause.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQLiteProviderManifest.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite.Linq\SQLiteProviderServices.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\LINQ\SQLiteConnection_Linq.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Sqlite\System.Data.SQLite\LINQ\SQLiteFactory_Linq.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLite3.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLite3_UTF16.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteBase.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteCommand.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteCommandBuilder.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteConnection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteConnectionPool.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteConnectionStringBuilder.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteConvert.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteDataAdapter.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteDataReader.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteEnlistment.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteException.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteFactory.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteFunction.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteFunctionAttribute.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteKeyReader.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteMetaDataCollectionNames.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteParameter.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteParameterCollection.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteStatement.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SQLiteTransaction.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\SR.Designer.cs" />
+    <Compile Include="Sqlite\System.Data.SQLite\UnsafeNativeMethods.cs" />
+    <Compile Include="SharpZipLib\Tar\InvalidHeaderException.cs" />
+    <Compile Include="SharpZipLib\Tar\TarArchive.cs" />
+    <Compile Include="SharpZipLib\Tar\TarBuffer.cs" />
+    <Compile Include="SharpZipLib\Tar\TarEntry.cs" />
+    <Compile Include="SharpZipLib\Tar\TarException.cs" />
+    <Compile Include="SharpZipLib\Tar\TarHeader.cs" />
+    <Compile Include="SharpZipLib\Tar\TarInputStream.cs" />
+    <Compile Include="SharpZipLib\Tar\TarOutputStream.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Deflater.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterConstants.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterEngine.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterHuffman.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\DeflaterPending.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Inflater.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\InflaterDynHeader.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\InflaterHuffmanTree.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\PendingBuffer.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\DeflaterOutputStream.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\InflaterInputStream.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\OutputWindow.cs" />
+    <Compile Include="SharpZipLib\Zip\Compression\Streams\StreamManipulator.cs" />
+    <Compile Include="SharpZipLib\Zip\FastZip.cs" />
+    <Compile Include="SharpZipLib\Zip\IEntryFactory.cs" />
+    <Compile Include="SharpZipLib\Zip\WindowsNameTransform.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipConstants.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipEntry.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipEntryFactory.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipException.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipExtraData.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipFile.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipHelperStream.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipInputStream.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipNameTransform.cs" />
+    <Compile Include="SharpZipLib\Zip\ZipOutputStream.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -129,6 +183,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Sqlite\System.Data.SQLite.Linq\Properties\Resources.resx" />
+    <EmbeddedResource Include="Sqlite\System.Data.SQLite\SR.resx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -138,11 +194,29 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\Common.ConceptualSchemaDefinition.csdl" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\Common.ProviderManifest.xsd" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\SQLiteProviderServices.StoreSchemaDefinition.ssdl" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\SQLiteProviderServices.StoreSchemaMapping.msl" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\System.Data.Resources.CodeGenerationSchema.xsd" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\System.Data.Resources.CSDLSchema.xsd" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\System.Data.Resources.CSMSL.xsd" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\System.Data.Resources.EntityStoreSchemaGenerator.xsd" />
+    <None Include="Sqlite\System.Data.SQLite.Linq\Resources\System.Data.Resources.SSDLSchema.xsd" />
+    <None Include="Sqlite\System.Data.SQLite\System.Data.SQLite.CF.snk" />
+    <None Include="Sqlite\System.Data.SQLite\System.Data.SQLite.snk" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="base_manifests\minecraft.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
+    <Content Include="Sqlite\System.Data.SQLite.Linq\Resources\SQLiteProviderServices.ProviderManifest.xml" />
+    <Content Include="Sqlite\System.Data.SQLite\DataTypes.xml" />
+    <Content Include="Sqlite\System.Data.SQLite\MetaDataCollections.xml" />
+    <Content Include="Sqlite\System.Data.SQLite\SQLiteCommand.bmp" />
+    <Content Include="Sqlite\System.Data.SQLite\SQLiteConnection.bmp" />
+    <Content Include="Sqlite\System.Data.SQLite\SQLiteDataAdapter.bmp" />
     <Content Include="test.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

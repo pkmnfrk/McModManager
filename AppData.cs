@@ -28,12 +28,12 @@ namespace MCModManager {
             return Path.Combine(ArchivesPath, mod);
         }
 
-        public Mod LookupMod(ID id) {
+        public static Mod LookupMod(ID id) {
             if (Mods.ContainsKey(id)) {
                 return Mods[id];
             }
 
-
+            return null;
         }
 
         public static void InitAppData() {
