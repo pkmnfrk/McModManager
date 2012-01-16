@@ -27,7 +27,7 @@ namespace MCModManager {
             Manifest ret = new Manifest();
 
             ret.Name = manifest.Root.Element(ns.GetName("name")).Value;
-            ret.Id = ID.Parse(manifest.Root.Element(ns.GetName("id")).Value);
+            ret.Id = ID.Parse(manifest.Root.Element(ns.GetName("id")));
 
             foreach (var ver in manifest.Root.Element(ns.GetName("versions")).Elements(ns.GetName("version"))) {
                 ret.Versions.Add(Version.LoadVersion(ver));
@@ -39,13 +39,38 @@ namespace MCModManager {
         public struct ID {
             public string Root;
             public string Value;
+            public string Version;
 
             public static ID Parse(string str) {
+                string root = string.Empty, value, version = null;
+
                 if (str.Contains(":")) {
                     string[] v = str.Split(':');
-                    return new ID { Root = v[0], Value = v[1] };
+                    root = v[0];
+                    if (v[1].Contains("#")) {
+                        string[] v2 = v[1].Split('#');
+                        value = v2[0];
+                        version = v2[1];
+                    } else {
+                        value = v[1];
+                        version = null;
+                    }
                 } else {
-                    return new ID { Root = string.Empty, Value = str };
+                    value = str;
+                }
+
+                return new ID { Root = root, Value = str, Version = version };
+            }
+
+            public static ID Parse(XElement el) {
+                if (el.Element("root") != null) {
+                    if (el.Element("version") != null) {
+                        return new ID { Root = el.Element("root").Value, Value = el.Element("value").Value, Version = el.Element("version").Value };
+                    } else {
+                        return new ID { Root = el.Element("root").Value, Value = el.Element("value").Value };
+                    }
+                } else {
+                    return Parse(el.Value);
                 }
             }
 

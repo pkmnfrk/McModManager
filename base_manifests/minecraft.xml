@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns="http://mike-caron.com/McModManager/manifest">
-  <id>base:minecraft</id>
+  <id>
+    <root>base</root>
+    <value>minecraft</value>
+  </id>
   <name>Minecraft</name>
   <versions>
     <version>
