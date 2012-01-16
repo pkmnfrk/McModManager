@@ -85,7 +85,7 @@
     <Compile Include="Mod.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SharpZipBaseException.cs" />
+    <Compile Include="Core\SharpZipBaseException.cs" />
     <Compile Include="Tar\InvalidHeaderException.cs" />
     <Compile Include="Tar\TarArchive.cs" />
     <Compile Include="Tar\TarBuffer.cs" />
@@ -140,7 +140,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="base_manifests\minecraft.xml" />
+    <Content Include="base_manifests\minecraft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="test.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

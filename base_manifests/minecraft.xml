@@ -1,13 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns="http://mike-caron.com/McModManager/manifest">
-  <id>
-    <root>base</root>
-    <value>minecraft</value>
-  </id>
+  <id>base:minecraft</id>
   <name>Minecraft</name>
   <versions>
     <version>
-      <url>s3.amazonaws.com/MinecraftDownload/minecraft.jar</url>
+      <url>http://s3.amazonaws.com/MinecraftDownload/minecraft.jar</url>
       <ver>1.1</ver>
       <packing>base</packing>
     </version>
