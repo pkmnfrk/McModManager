@@ -7,6 +7,7 @@ using System.Net;
 
 namespace MCModManager {
     public class Manifest {
+        public ID Id { get; set; }
         public string Name { get; set; }
         public IList<Version> Versions { get; protected set; }
 
@@ -26,12 +27,31 @@ namespace MCModManager {
             Manifest ret = new Manifest();
 
             ret.Name = manifest.Root.Element(ns.GetName("name")).Value;
+            ret.Id = ID.Parse(manifest.Root.Element(ns.GetName("id")).Value);
 
             foreach (var ver in manifest.Root.Element(ns.GetName("versions")).Elements(ns.GetName("version"))) {
                 ret.Versions.Add(Version.LoadVersion(ver));
             }
 
             return ret;
+        }
+
+        public struct ID {
+            public string Root;
+            public string Value;
+
+            public static ID Parse(string str) {
+                if (str.Contains(":")) {
+                    string[] v = str.Split(':');
+                    return new ID { Root = v[0], Value = v[1] };
+                } else {
+                    return new ID { Root = string.Empty, Value = str };
+                }
+            }
+
+            public override string ToString() {
+                return string.Format("{0}:{1}", Root, Value);
+            }
         }
 
         public class Version {
