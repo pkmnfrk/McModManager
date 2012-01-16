@@ -2,6 +2,7 @@
 <manifest xmlns="http://mike-caron.com/McModManager/manifest">
   <id>base:minecraft</id>
   <name>Minecraft</name>
+  <url>file://base_manifests/minecraft.xml</url>
   <versions>
     <version>
       <url>http://s3.amazonaws.com/MinecraftDownload/minecraft.jar</url>
