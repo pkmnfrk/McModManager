@@ -42,7 +42,8 @@ namespace MCModManager {
             public enum PackingType {
                 Unknown,
                 ModLoader,
-                Raw
+                Raw,
+                Base
             }
 
             internal static Version LoadVersion(XElement ver) {
@@ -57,6 +58,8 @@ namespace MCModManager {
                     ret.Packing = PackingType.ModLoader;
                 } else if (packing == "raw") {
                     ret.Packing = PackingType.Raw;
+                } else if(packing == "base") {
+                    ret.Packing = PackingType.Base; //only minecraft.jar gets this...
                 } else {
                     throw new Exception("Unknown packing type " + packing);
                 }
