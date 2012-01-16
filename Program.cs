@@ -10,6 +10,9 @@ namespace MCModManager {
         /// </summary>
         [STAThread]
         static void Main() {
+
+            AppData.InitAppData();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

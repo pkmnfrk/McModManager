@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <manifest xmlns="http://mike-caron.com/McModManager/manifest">
-  <name></name>
+  <name>Test Mod</name>
   <versions>
     <version>
       <url>http://whatever/</url>
-      <version>1.0</version>
+      <ver>1.0</ver>
       <packing>modloader</packing>
     </version>
   </versions>

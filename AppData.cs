@@ -7,8 +7,8 @@ using System.IO;
 namespace MCModManager {
     internal static class AppData {
 
-        private Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
-        public Dictionary<string, Mod> Mods {
+        private static Dictionary<string, Mod> mods = new Dictionary<string, Mod>();
+        public static Dictionary<string, Mod> Mods {
             get { return mods; }
         }
 
@@ -39,7 +39,6 @@ namespace MCModManager {
             }
 
             //minecraft.jar is special, so lets load it now
-            
 
             
 
