@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<manifest xmlns="http://mike-caron.com/McModManager/manifest">
+  <name></name>
+  <versions>
+    <version>
+      <url>http://whatever/</url>
+      <version>1.0</version>
+      <packing>modloader</packing>
+    </version>
+  </versions>
+</manifest>
