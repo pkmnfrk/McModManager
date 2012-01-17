@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
+using Dapper;
+using System.Data;
+
 namespace MCModManager {
     internal static class AppData {
 
@@ -12,7 +15,7 @@ namespace MCModManager {
             get { return mods; }
         }
 
-        private static string AppDataPath {
+        internal static string AppDataPath {
             get {
                 return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MCModManager");
             }
@@ -28,6 +31,8 @@ namespace MCModManager {
             return Path.Combine(ArchivesPath, mod);
         }
 
+        
+
         public static Mod LookupMod(ID id) {
             if (Mods.ContainsKey(id)) {
                 return Mods[id];
@@ -35,6 +40,8 @@ namespace MCModManager {
 
             return null;
         }
+
+        
 
         public static void InitAppData() {
 
@@ -46,8 +53,7 @@ namespace MCModManager {
                 Directory.CreateDirectory(ArchivesPath);
             }
 
-            //minecraft.jar is special, so lets load it now
-            Mods.Add("base:minecraft".ID(), new Mod("base_manifests/minecraft.xml"));
+            mods = Mod.LoadMods().ToDictionary( k => k.Id );
             
         }
     }

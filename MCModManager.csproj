@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="AppData.cs" />
     <Compile Include="Archive.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="SharpZipLib\BZip2\BZip2.cs" />
     <Compile Include="SharpZipLib\BZip2\BZip2Constants.cs" />
     <Compile Include="SharpZipLib\BZip2\BZip2Exception.cs" />
@@ -91,7 +92,6 @@
     <Compile Include="SharpZipLib\Lzw\LzwException.cs" />
     <Compile Include="SharpZipLib\Lzw\LzwInputStream.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="Manifest.cs" />
     <Compile Include="Mod.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
