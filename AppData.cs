@@ -53,6 +53,8 @@ namespace MCModManager {
                 Directory.CreateDirectory(ArchivesPath);
             }
 
+			Database.InitDatabase();
+
             mods = Mod.LoadMods().ToDictionary( k => k.Id );
             
         }
