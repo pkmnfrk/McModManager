@@ -24,12 +24,35 @@ namespace MCModManager {
         }
 
 		internal static void InitDatabase() {
+
+            var already_tried_once = false;
+
+        tryagain:
+
 			using (var dbConn = (System.Data.SQLite.SQLiteConnection)GetConnection()) {
 				var version = dbConn.Query<long>("pragma user_version;").First();
 
-				if (version < 1) {
-					DatabaseVersion1(dbConn);
-				}
+                try {
+
+                    if (version < 1) {
+                        DatabaseVersion1(dbConn);
+                        version = 1;
+                    }
+
+                } catch(Exception) {
+                    if (already_tried_once) {
+                        throw; //welp
+                    }
+                    //well, it's hard to say why exactly this failed
+                    //only thing we can do now is to nuke the database from orbit
+                    dbConn.Close();
+                    if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
+
+                    File.Move(DatabasePath, DatabasePath + ".bak");
+                    version = 0;
+                    already_tried_once = true;
+                    goto tryagain;
+                }
 
 			}
 		}
