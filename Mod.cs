@@ -49,10 +49,11 @@ namespace MCModManager {
         public static IEnumerable<Mod> LoadMods() {
 
             using (var dbConn = Database.GetConnection()) {
+                var deps = dbConn.Query("SELECT modid, version, depmodid, depversion FROM moddependency");
                 var versions = dbConn.Query("SELECT modid, version, url, packing FROM modversion");
                 
                 return dbConn.Query("SELECT Id, Name, Url FROM mod")
-                             .Select(m => new Mod(versions.Where(v => v.modid == m.id).Select(v => new Mod.Version {
+                             .Select(m => new Mod(versions.Where(v => v.modid == m.id).Select(v => new Mod.Version(deps.Where(d => d.modid == m.id && d.version == v.version).Select<dynamic, ID>(d => ID.MakeID(d.depmodid, d.depversion))) {
                                  Ver = v.version,
                                  Url = v.url,
                                  Packing = (Mod.Version.PackingType)Enum.Parse(typeof(Mod.Version.PackingType), v.packing)
@@ -94,6 +95,10 @@ namespace MCModManager {
                 Dependencies = new List<ID>();
             }
 
+            internal Version(IEnumerable<ID> Deps) {
+                Dependencies = Deps.ToList();
+            }
+
             public enum PackingType {
                 Unknown,
                 ModLoader,
@@ -133,7 +138,12 @@ namespace MCModManager {
             }
 
             internal void Save(IDbConnection dbConn, IDbTransaction tx) {
+                
                 dbConn.Execute("REPLACE INTO modversion (modid, version, url, packing) VALUES (@Id, @Ver, @Url, @Packing)", new { Id = (string)parent.Id, this.Ver, this.Url, this.Packing }, tx);
+
+                foreach (var dep in Dependencies) {
+                    dbConn.Execute("REPLACE INTO moddependency (modid, version, depmodid, depversion) VALUES (@Id, @Ver, @DepId, @DepVer)", new { Id = (string)parent.Id, this.Ver, DepId = dep.Root + ":" + dep.Value, DepVer = dep.Version });
+                }
             }
         }
     }
@@ -142,6 +152,21 @@ namespace MCModManager {
         public string Root;
         public string Value;
         public string Version;
+
+        public static ID MakeID(string root, string value = null, string version = null) {
+            
+            if (root.Contains(':')) {
+                ID tmp = Parse(root);
+                root = tmp.Root;
+                if (value != null && version == null) {
+                    version = value;
+                    value = tmp.Value;
+                }
+                if (version == null) version = tmp.Version;
+            }
+            
+            return new ID { Root = root, Value = value, Version = version };
+        }
 
         public static ID Parse(string str) {
             string root = string.Empty, value, version = null;
@@ -177,7 +202,7 @@ namespace MCModManager {
         }
 
         public override string ToString() {
-            return string.Format("{0}:{1}", Root, Value);
+            return string.Format("{0}:{1}{2}", Root, Value, Version != null ? "#" + Version : string.Empty);
         }
         public override bool Equals(object obj) {
             if (obj == null) return false;

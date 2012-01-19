@@ -75,6 +75,16 @@ namespace MCModManager {
 						PRIMARY KEY (modid, version),
 						FOREIGN KEY (modid) REFERENCES mod(id)
 					);
+
+                    CREATE TABLE moddependency (
+                        modid TEXT NOT NULL,
+                        version TEXT NOT NULL,
+                        depmodid TEXT NOT NULL,
+                        depversion TEXT NOT NULL,
+                        PRIMARY KEY (modid, version, depmodid, depversion),
+                        FOREIGN KEY (modid, version) REFERENCES modversion(modid, version),
+                        FOREIGN KEY (depmodid, depversion) REFERENCES modversion(modid, version)
+                    );
 				");
 
 				dbConn.Execute("pragma user_version = 1");

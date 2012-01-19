@@ -60,7 +60,11 @@ namespace MCModManager {
             if (!mods.ContainsKey("base:minecraft")) {
                 Mod mc = Mod.LoadFromUrl("base_manifests/minecraft.xml");
                 mc.Save();
+            }
 
+            if (!mods.ContainsKey("base:testmod")) {
+                Mod test = Mod.LoadFromUrl("test.xml");
+                test.Save();
             }
             
         }
