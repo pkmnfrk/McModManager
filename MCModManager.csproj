@@ -59,6 +59,8 @@
     <Compile Include="AppData.cs" />
     <Compile Include="Archive.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="ID.cs" />
+    <Compile Include="ModVersion.cs" />
     <Compile Include="SharpZipLib\BZip2\BZip2.cs" />
     <Compile Include="SharpZipLib\BZip2\BZip2Constants.cs" />
     <Compile Include="SharpZipLib\BZip2\BZip2Exception.cs" />
