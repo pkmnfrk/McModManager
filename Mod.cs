@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Net;
 using Dapper;
+using System.Data;
 
 namespace MCModManager {
     public class Mod {
@@ -17,6 +18,13 @@ namespace MCModManager {
 
         public Mod() {
             Versions = new List<Version>();
+        }
+
+        private Mod(IEnumerable<Version> versions) :this() {
+            foreach (var v in versions) {
+                v.parent = this;
+                Versions.Add(v);
+            }
         }
 
         public Mod(string uri) : this() {
@@ -32,7 +40,9 @@ namespace MCModManager {
             if (this.Id.Version != null) throw new Exception("Manifest IDs cannot include versions");
 
             foreach (var ver in manifest.Root.Element(ns.GetName("versions")).Elements(ns.GetName("version"))) {
-                this.Versions.Add(Version.LoadVersion(ver));
+                var v = Version.LoadVersion(ver);
+                v.parent = this;
+                this.Versions.Add(v);
             }
         }
 
@@ -42,18 +52,31 @@ namespace MCModManager {
                 var versions = dbConn.Query("SELECT modid, version, url, packing FROM modversion");
                 
                 return dbConn.Query("SELECT Id, Name, Url FROM mod")
-                             .Select(m => new Mod() {
-                                 Id = m.ID,
-                                 Name = m.NAME,
-                                 Url = m.URL,
-                                 Versions = versions.Where(v => v.modid == m.ID).Select(v => new Mod.Version {
-                                     Ver = v.version,
-                                     URL = v.url,
-                                     Packing = (Mod.Version.PackingType)Enum.Parse(typeof(Mod.Version.PackingType), v.packing)
-                                 }).ToList()
+                             .Select(m => new Mod(versions.Where(v => v.modid == m.id).Select(v => new Mod.Version {
+                                 Ver = v.version,
+                                 Url = v.url,
+                                 Packing = (Mod.Version.PackingType)Enum.Parse(typeof(Mod.Version.PackingType), v.packing)
+                             })) {
+                                 Id = m.id,
+                                 Name = m.name,
+                                 Url = m.url,
                              }).ToList();
             }
 
+        }
+
+        public void Save() {
+            using (var dbConn = Database.GetConnection())
+            using(var tx = dbConn.BeginTransaction()) {
+                
+                dbConn.Execute("REPLACE INTO mod (id, name, url) VALUES (@Id, @Name, @Url)", new { Id = (string)this.Id, this.Name, this.Url }, tx);
+
+                foreach (var version in Versions) {
+                    version.Save(dbConn, tx);
+                }
+
+                tx.Commit();
+            }
         }
 
         public static Mod LoadFromUrl(string uri) {
@@ -61,7 +84,8 @@ namespace MCModManager {
         }
 
         public class Version {
-            public string URL { get; set; }
+            internal Mod parent;
+            public string Url { get; set; }
             public string Ver { get; set; }
             public PackingType Packing { get; set; }
             public IList<ID> Dependencies { get; protected set; }
@@ -80,7 +104,7 @@ namespace MCModManager {
             internal static Version LoadVersion(XElement ver) {
                 Version ret = new Version();
 
-                ret.URL = ver.Element(ns.GetName("url")).Value;
+                ret.Url = ver.Element(ns.GetName("url")).Value;
                 ret.Ver = ver.Element(ns.GetName("ver")).Value;
 
                 var packing = ver.Element(ns.GetName("packing")).Value;
@@ -105,7 +129,11 @@ namespace MCModManager {
             }
 
             public override string ToString() {
-                return string.Format("{{{0}, {1}}}", Ver, URL);
+                return string.Format("{{{0}, {1}}}", Ver, Url);
+            }
+
+            internal void Save(IDbConnection dbConn, IDbTransaction tx) {
+                dbConn.Execute("REPLACE INTO modversion (modid, version, url, packing) VALUES (@Id, @Ver, @Url, @Packing)", new { Id = (string)parent.Id, this.Ver, this.Url, this.Packing }, tx);
             }
         }
     }
@@ -133,7 +161,7 @@ namespace MCModManager {
                 value = str;
             }
 
-            return new ID { Root = root, Value = str, Version = version };
+            return new ID { Root = root, Value = value, Version = version };
         }
 
         public static ID Parse(XElement el) {
@@ -178,6 +206,10 @@ namespace MCModManager {
 
         public static implicit operator ID(XElement val) {
             return Parse(val);
+        }
+
+        public static implicit operator string(ID val) {
+            return val.ToString();
         }
     }
 

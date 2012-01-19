@@ -56,6 +56,12 @@ namespace MCModManager {
 			Database.InitDatabase();
 
             mods = Mod.LoadMods().ToDictionary( k => k.Id );
+
+            if (!mods.ContainsKey("base:minecraft")) {
+                Mod mc = Mod.LoadFromUrl("base_manifests/minecraft.xml");
+                mc.Save();
+
+            }
             
         }
     }
