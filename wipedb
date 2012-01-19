@@ -1,1 +1,1 @@
-rm ~/AppData/Roaming/McModManager/data.db
+rm "$APPDATA/McModManager/data.db"
