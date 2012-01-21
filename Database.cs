@@ -17,50 +17,62 @@ namespace MCModManager {
             }
         }
 
+        public static string ConnectionString {
+            get {
+                return "Data Source=" + DatabasePath;
+            }
+        }
+
         internal static IDbConnection GetConnection() {
-            var ret = new System.Data.SQLite.SQLiteConnection("Data Source=" + DatabasePath);
+            var ret = new SQLiteConnection(ConnectionString);
             ret.Open();
             return ret;
         }
 
-		internal static void InitDatabase() {
+        internal static void InitDatabase(bool recurse = false) {
+            bool created = false;
+            var dbConn = new SQLiteConnection(ConnectionString);
 
-            var already_tried_once = false;
+            try {
+                dbConn.Open();
+            } catch (SQLiteException ex1) {
 
-        tryagain:
-
-			using (var dbConn = (System.Data.SQLite.SQLiteConnection)GetConnection()) {
-				var version = dbConn.Query<long>("pragma user_version;").First();
-
+                if (recurse) throw;
                 try {
-
-                    if (version < 1) {
-                        DatabaseVersion1(dbConn);
-                        version = 1;
-                    }
-
-                } catch(Exception) {
-                    if (already_tried_once) {
-                        throw; //welp
-                    }
-                    //well, it's hard to say why exactly this failed
-                    //only thing we can do now is to nuke the database from orbit
-                    dbConn.Close();
                     if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
-
-                    File.Move(DatabasePath, DatabasePath + ".bak");
-                    version = 0;
-                    already_tried_once = true;
-                    goto tryagain;
+                    if (File.Exists(DatabasePath)) File.Move(DatabasePath, DatabasePath + ".bak");
+                } catch (Exception ex) {
+                    throw new AggregateException(ex1, ex);
                 }
+                dbConn.Open();
+                created = true;
+            }
 
-			}
-		}
+            var version = dbConn.Query<long>("pragma user_version;").First();
 
-		private static void DatabaseVersion1(SQLiteConnection dbConn) {
-			using (var tx = dbConn.BeginTransaction()) {
+            try {
 
-				dbConn.Execute(@"
+                if (version < 1) {
+                    DatabaseVersion1(dbConn);
+                    version = 1;
+                }
+                dbConn.Close();
+            } catch (Exception) {
+                dbConn.Close();
+                if (!created) {
+                    if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
+                    if (File.Exists(DatabasePath)) File.Move(DatabasePath, DatabasePath + ".bak");
+                    InitDatabase(true);
+                }
+            }
+
+        }
+
+
+        private static void DatabaseVersion1(SQLiteConnection dbConn) {
+            using (var tx = dbConn.BeginTransaction()) {
+
+                dbConn.Execute(@"
 					CREATE TABLE mod (
 						id TEXT NOT NULL PRIMARY KEY,
 						name TEXT NOT NULL,
@@ -87,9 +99,9 @@ namespace MCModManager {
                     );
 				");
 
-				dbConn.Execute("pragma user_version = 1");
-				tx.Commit();
-			}
-		}
+                dbConn.Execute("pragma user_version = 1");
+                tx.Commit();
+            }
+        }
     }
 }
