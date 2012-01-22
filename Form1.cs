@@ -56,6 +56,12 @@ namespace MCModManager
                     };
 
                     var tvwVer = new TreeNode(ver.Ver, tvwVerSubnodes);
+
+                    if (ver.IsDownloaded)
+                    {
+                        tvwVer.Nodes.Add("File Hash: " + ver.FileHash);
+                    }
+
                     var tvwVerDep = new TreeNode("Dependencies:");
                     tvwVer.Nodes.Add(tvwVerDep);
 
@@ -77,6 +83,14 @@ namespace MCModManager
             }
 
             treeView1.EndUpdate();
+        }
+
+        private void TreeView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.C)
+            {
+                Clipboard.SetText(treeView1.SelectedNode.Text);
+            }
         }
     }
 }

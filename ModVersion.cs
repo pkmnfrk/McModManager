@@ -165,6 +165,27 @@ namespace MCModManager
         }
 
         /// <summary>
+        /// Tries to locate a mod by its file hash
+        /// </summary>
+        /// <param name="hash">the MD5 hash of a file</param>
+        /// <returns>a ModVersion, or null if it cannot find it</returns>
+        public static ModVersion FindByFileHash(string hash)
+        {
+            string sql = @"SELECT modid, version FROM modversion WHERE hash = @hash";
+
+            using (var dbConn = Database.GetConnection())
+            {
+                var data = dbConn.Query(sql, new { hash }).FirstOrDefault();
+                if (data == null)
+                {
+                    return null;
+                }
+
+                return AppData.Mods[(string)data.modid].Versions.Single(v => v.Ver == data.version);
+            }
+        }
+
+        /// <summary>
         /// Returns a string version of this ModVersion
         /// </summary>
         /// <returns>a string version of this ModVersion</returns>
@@ -178,8 +199,10 @@ namespace MCModManager
         /// </summary>
         /// <param name="parent">the Mod that owns this version</param>
         /// <param name="ver">the XML from which to create the node</param>
+        /// <param name="dbConn">The database connection</param>
+        /// <param name="tx">The Transaction scope</param>
         /// <returns>a ModVersion</returns>
-        internal static ModVersion LoadVersion(Mod parent, XElement ver)
+        internal static ModVersion LoadVersion(Mod parent, XElement ver, IDbConnection dbConn, IDbTransaction tx)
         {
             var ret = new ModVersion();
 
@@ -207,16 +230,13 @@ namespace MCModManager
                 ret.FileName = "mod.zip";
             }
 
-            using (var dbConn = Database.GetConnection())
-            {
-                ret.Save(dbConn);
+            ret.Save(dbConn, tx);
 
-                if (ver.Element(ns.GetName("depends")) != null)
+            if (ver.Element(ns.GetName("depends")) != null)
+            {
+                foreach (var dep in ver.Element(ns.GetName("depends")).Elements(ns.GetName("depend")).Select(d => ID.Parse(d)))
                 {
-                    foreach (var dep in ver.Element(ns.GetName("depends")).Elements(ns.GetName("depend")).Select(d => ID.Parse(d)))
-                    {
-                        dbConn.Execute("REPLACE INTO moddependency (modid, version, depmodid, depversion) VALUES (@Id, @Ver, @DepId, @DepVer)", new { Id = (string)ret.ParentId, ret.Ver, DepId = dep.Root + ":" + dep.Value, DepVer = dep.Version });
-                    }
+                    dbConn.Execute("REPLACE INTO moddependency (modid, version, depmodid, depversion) VALUES (@Id, @Ver, @DepId, @DepVer)", new { Id = (string)ret.ParentId, ret.Ver, DepId = dep.Root + ":" + dep.Value, DepVer = dep.Version }, tx);
                 }
             }
 
@@ -296,6 +316,7 @@ namespace MCModManager
             if (string.IsNullOrEmpty(this.Hash))
             {
                 this.Hash = this.FileHash;
+                this.Save();
             }
         }
     }

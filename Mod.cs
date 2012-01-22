@@ -38,40 +38,6 @@ namespace MCModManager
         }
 
         /// <summary>
-        /// Initializes a new instance of the Mod class from a Manifest file
-        /// </summary>
-        /// <param name="uri">The URI of the manifest to load</param>
-        public Mod(string uri)
-            : this()
-        {
-            XDocument manifest = XDocument.Load(uri);
-
-            if (manifest.Root.Name != Namespace.GetName("manifest"))
-            {
-                throw new Exception("That's not a McModManager manifest");
-            }
-
-            this.Name = manifest.Root.Element(Namespace.GetName("name")).Value;
-            this.Id = manifest.Root.Element(Namespace.GetName("id"));
-
-            if (this.Id.Version != null)
-            {
-                throw new Exception("Manifest IDs cannot include versions");
-            }
-
-            if (manifest.Root.Element(Namespace.GetName("url")) != null)
-            {
-                this.Url = manifest.Root.Element(Namespace.GetName("url")).Value;
-            }
-
-            foreach (var ver in manifest.Root.Element(Namespace.GetName("versions")).Elements(Namespace.GetName("version")))
-            {
-                var v = ModVersion.LoadVersion(this, ver);
-                v.Save();
-            }
-        }
-
-        /// <summary>
         /// Gets the unique ID of this particular Mod
         /// </summary>
         public ID Id { get; private set; }
@@ -127,7 +93,42 @@ namespace MCModManager
         /// <returns>a Mod</returns>
         public static Mod LoadFromUrl(string uri)
         {
-            return new Mod(uri);
+            Mod ret = new Mod();
+
+            XDocument manifest = XDocument.Load(uri);
+
+            if (manifest.Root.Name != Namespace.GetName("manifest"))
+            {
+                throw new Exception("That's not a McModManager manifest");
+            }
+
+            ret.Name = manifest.Root.Element(Namespace.GetName("name")).Value;
+            ret.Id = manifest.Root.Element(Namespace.GetName("id"));
+
+            if (ret.Id.Version != null)
+            {
+                throw new Exception("Manifest IDs cannot include versions");
+            }
+
+            if (manifest.Root.Element(Namespace.GetName("url")) != null)
+            {
+                ret.Url = manifest.Root.Element(Namespace.GetName("url")).Value;
+            }
+
+            using (var dbConn = Database.GetConnection())
+            using (var tx = dbConn.BeginTransaction())
+            {
+                ret.Save(dbConn, tx);
+                foreach (var ver in manifest.Root.Element(Namespace.GetName("versions")).Elements(Namespace.GetName("version")))
+                {
+                    var v = ModVersion.LoadVersion(ret, ver, dbConn, tx);
+                    v.Save(dbConn, tx);
+                }
+
+                tx.Commit();
+            }
+
+            return ret;
         }
 
         /// <summary>
@@ -138,10 +139,19 @@ namespace MCModManager
             using (var dbConn = Database.GetConnection())
             using (var tx = dbConn.BeginTransaction())
             {
-                dbConn.Execute("REPLACE INTO mod (id, name, url) VALUES (@Id, @Name, @Url)", new { Id = (string)this.Id, this.Name, this.Url }, tx);
-
+                this.Save(dbConn, tx);
                 tx.Commit();
             }
+        }
+
+        /// <summary>
+        /// Saves this Mod to the database
+        /// </summary>
+        /// <param name="dbConn">The database connection</param>
+        /// <param name="tx">The transaction scope</param>
+        public void Save(IDbConnection dbConn, IDbTransaction tx = null)
+        {
+            dbConn.Execute("REPLACE INTO mod (id, name, url) VALUES (@Id, @Name, @Url)", new { Id = (string)this.Id, this.Name, this.Url }, tx);
         }
 
         /// <summary>

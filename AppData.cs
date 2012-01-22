@@ -91,6 +91,10 @@ namespace MCModManager
                 Environment.Exit(1);
             }
 
+            Mod.LoadFromUrl("base_manifests/minecraft.xml");
+            Mod.LoadFromUrl("singlePlayerCommands.xml");
+            Mod.LoadFromUrl("test.xml");            
+
             try
             {
                 mods = Mod.LoadMods().ToDictionary(k => k.Id);
@@ -101,27 +105,21 @@ namespace MCModManager
                 Environment.Exit(1);
             }
 
-            if (!mods.ContainsKey("base:minecraft"))
+            foreach (Mod m in Mods.Values)
             {
-                Mod mc = Mod.LoadFromUrl("base_manifests/minecraft.xml");
-                mods[mc.Id] = mc;
-            }
-
-            if (!mods["base:minecraft"].Versions.First().IsDownloaded)
-            {
-                mods["base:minecraft"].Versions.First().Download();
-            }
-
-            if (!mods.ContainsKey("base:testmod"))
-            {
-                Mod test = Mod.LoadFromUrl("test.xml");
-                mods[test.Id] = test;
-            }
-
-            if (!mods.ContainsKey("simo_415:single player commands"))
-            {
-                Mod spc = Mod.LoadFromUrl("singlePlayerCommands.xml");
-                mods[spc.Id] = spc;
+                foreach (ModVersion v in m.Versions)
+                {
+                    if (!v.IsDownloaded)
+                    {
+                        try
+                        {
+                            v.Download();
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }
             }
         }
 

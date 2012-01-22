@@ -8,6 +8,13 @@
       <url>http://s3.amazonaws.com/MinecraftDownload/minecraft.jar</url>
       <ver>1.1</ver>
       <packing>base</packing>
+      <hash>e9232d2acdba7c97ed8df1e1d206</hash>
+    </version>
+    <version>
+      <url>http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?v=1.0</url>
+      <ver>1.0</ver>
+      <packing>base</packing>
+      <hash>3820d222b95db8c52d9596a756a6e6</hash>
     </version>
   </versions>
 </manifest>
