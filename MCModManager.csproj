@@ -63,7 +63,6 @@
     <Compile Include="Database.cs">
     </Compile>
     <Compile Include="ID.cs">
-      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="ModVersion.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
