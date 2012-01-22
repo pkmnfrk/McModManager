@@ -8,42 +8,54 @@ using System.IO;
 using Dapper;
 
 
-namespace MCModManager {
-    static class Database {
+namespace MCModManager
+{
+    static class Database
+    {
 
-        private static string DatabasePath {
-            get {
+        private static string DatabasePath
+        {
+            get
+            {
                 return Path.Combine(AppData.AppDataPath, "data.db");
             }
         }
 
-        public static string ConnectionString {
-            get {
+        public static string ConnectionString
+        {
+            get
+            {
                 return "Data Source=" + DatabasePath;
             }
         }
 
-        internal static IDbConnection GetConnection() {
+        internal static IDbConnection GetConnection()
+        {
             var ret = new SQLiteConnection(ConnectionString);
             ret.Open();
             return ret;
         }
 
-        internal static void InitDatabase(bool recurse = false) {
+        internal static void InitDatabase(bool recurse = false)
+        {
             bool created = false;
             var dbConn = new SQLiteConnection(ConnectionString);
 
             //File.Delete(DatabasePath);
 
-            try {
+            try
+            {
                 dbConn.Open();
-            } catch (SQLiteException ex1) {
+            } catch (SQLiteException ex1)
+            {
 
                 if (recurse) throw;
-                try {
+                try
+                {
                     if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
                     if (File.Exists(DatabasePath)) File.Move(DatabasePath, DatabasePath + ".bak");
-                } catch (Exception ex) {
+                } catch (Exception ex)
+                {
                     throw new AggregateException(ex1, ex);
                 }
                 dbConn.Open();
@@ -52,16 +64,20 @@ namespace MCModManager {
 
             var version = dbConn.Query<long>("pragma user_version;").First();
 
-            try {
+            try
+            {
 
-                if (version < 1) {
+                if (version < 1)
+                {
                     DatabaseVersion1(dbConn);
                     version = 1;
                 }
                 dbConn.Close();
-            } catch (Exception) {
+            } catch (Exception)
+            {
                 dbConn.Close();
-                if (!created) {
+                if (!created)
+                {
                     if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
                     if (File.Exists(DatabasePath)) File.Move(DatabasePath, DatabasePath + ".bak");
                     InitDatabase(true);
@@ -71,8 +87,10 @@ namespace MCModManager {
         }
 
 
-        private static void DatabaseVersion1(SQLiteConnection dbConn) {
-            using (var tx = dbConn.BeginTransaction()) {
+        private static void DatabaseVersion1(SQLiteConnection dbConn)
+        {
+            using (var tx = dbConn.BeginTransaction())
+            {
 
                 dbConn.Execute(@"
 					CREATE TABLE mod (
