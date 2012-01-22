@@ -59,7 +59,6 @@
     <Compile Include="AppData.cs">
 	</Compile>
     <Compile Include="Archive.cs">
-      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
 	</Compile>
     <Compile Include="Database.cs">
 	  <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
