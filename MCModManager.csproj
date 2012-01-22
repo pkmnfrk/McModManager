@@ -152,7 +152,6 @@
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Mod.cs">
-      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Program.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>

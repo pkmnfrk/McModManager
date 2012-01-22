@@ -109,7 +109,7 @@ namespace MCModManager
         {
             var ret = new ModVersion();
 
-            var ns = Mod.ns;
+            var ns = Mod.Namespace;
 
             ret.ParentId = parent.Id;
             ret.Url = ver.Element(ns.GetName("url")).Value;
