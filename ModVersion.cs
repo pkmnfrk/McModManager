@@ -1,50 +1,110 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
-using System.Data;
-using Dapper;
+﻿//-----------------------------------------------------------------------
+// <copyright file="ModVersion.cs" company="Mike Caron">
+//     using System.Standard.Disclaimer;
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace MCModManager
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
+    using System.Text;
+    using System.Xml.Linq;
+    
+    using Dapper;
+
+    /// <summary>
+    /// Represents a single version of a Mod
+    /// </summary>
     public class ModVersion
     {
-        public ID ParentId { get; set; }
-        public string Url { get; set; }
-        public string Ver { get; set; }
-        public PackingType Packing { get; set; }
-
+        /// <summary>
+        /// Cached list of dependencies
+        /// </summary>
         private IList<ID> deps;
 
+        /// <summary>
+        /// Determines how a mod is packaged
+        /// </summary>
+        public enum PackingType
+        {
+            /// <summary>
+            /// Not known (invalid)
+            /// </summary>
+            unknown,
+
+            /// <summary>
+            /// The mod is ModLoader compatible, and goes in the mods folder
+            /// </summary>
+            modloader,
+
+            /// <summary>
+            /// The mod is simply a collection of class files that go into the jar file
+            /// </summary>
+            raw,
+
+            /// <summary>
+            /// The mod is actually Minecraft itself, and doesn't go anywhere
+            /// </summary>
+            @base
+        }
+
+        /// <summary>
+        /// Gets the ID of the Mod this version belongs to
+        /// </summary>
+        public ID ParentId { get; private set; }
+
+        /// <summary>
+        /// Gets the URL where the Mod can be downloaded
+        /// </summary>
+        public string Url { get; private set; }
+
+        /// <summary>
+        /// Gets the version string for this version
+        /// </summary>
+        public string Ver { get; private set; }
+
+        /// <summary>
+        /// Gets the packing value for this version, which determines how it is meant to be installed
+        /// </summary>
+        public PackingType Packing { get; private set; }
+
+        /// <summary>
+        /// Gets the list of mods on which this mod is dependent to work correctly
+        /// </summary>
         public IEnumerable<ID> Dependencies
         {
             get
             {
-                if (deps == null)
+                if (this.deps == null)
                 {
                     using (var dbConn = Database.GetConnection())
                     {
-                        deps = dbConn.Query("SELECT depmodid, depversion FROM moddependency WHERE modid = @id AND version = @ver", new { id = (string)ParentId, ver = Ver }).Select<dynamic, ID>(i => ID.MakeID(i.depmodid, i.depversion)).ToList();
+                        this.deps = dbConn.Query("SELECT depmodid, depversion FROM moddependency WHERE modid = @id AND version = @ver", new { id = (string)this.ParentId, ver = this.Ver }).Select<dynamic, ID>(i => ID.MakeID(i.depmodid, i.depversion)).ToList();
                     }
                 }
-                return deps;
+
+                return this.deps;
             }
         }
 
-        public ModVersion()
+        /// <summary>
+        /// Returns a string version of this ModVersion
+        /// </summary>
+        /// <returns>a string version of this ModVersion</returns>
+        public override string ToString()
         {
-
+            return string.Format("{{{0}, {1}}}", this.Ver, this.Url);
         }
 
-        public enum PackingType
-        {
-            unknown,
-            modloader,
-            raw,
-            @base
-        }
-
+        /// <summary>
+        /// Creates a ModVersion from an XML manifest node
+        /// </summary>
+        /// <param name="parent">the Mod that owns this version</param>
+        /// <param name="ver">the XML from which to create the node</param>
+        /// <returns>a ModVersion</returns>
         internal static ModVersion LoadVersion(Mod parent, XElement ver)
         {
             var ret = new ModVersion();
@@ -73,26 +133,19 @@ namespace MCModManager
             return ret;
         }
 
-        public override string ToString()
-        {
-            return string.Format("{{{0}, {1}}}", Ver, Url);
-        }
-
-        internal void Save(IDbConnection dbConn, IDbTransaction tx = null)
-        {
-
-            dbConn.Execute("REPLACE INTO modversion (modid, version, url, packing) VALUES (@Id, @Ver, @Url, @Packing)", new { Id = (string)ParentId, this.Ver, this.Url, Packing = this.Packing.ToString() }, tx);
-
-        }
-
-        internal static IEnumerable<ModVersion> GetVersions(ID Id)
+        /// <summary>
+        /// Loads a list of ModVersions from the database for a given Mod
+        /// </summary>
+        /// <param name="id">the ID of the Mod for which to load versions</param>
+        /// <returns>a list of ModVersions</returns>
+        internal static IEnumerable<ModVersion> GetVersions(ID id)
         {
             using (var dbConn = Database.GetConnection())
             {
-                return dbConn.Query("SELECT version,url,packing FROM ModVersion WHERE ModId = @Id", new { Id = (string)Id })
+                return dbConn.Query("SELECT version,url,packing FROM ModVersion WHERE ModId = @Id", new { Id = (string)id })
                     .Select(v => new ModVersion
                     {
-                        ParentId = Id,
+                        ParentId = id,
                         Ver = v.version,
                         Url = v.url,
                         Packing = Enum.Parse(typeof(PackingType), v.packing),
@@ -100,6 +153,19 @@ namespace MCModManager
             }
         }
 
+        /// <summary>
+        /// Saves this ModVersion to the database
+        /// </summary>
+        /// <param name="dbConn">the Database connection</param>
+        /// <param name="tx">the Transaction scope</param>
+        internal void Save(IDbConnection dbConn, IDbTransaction tx = null)
+        {
+            dbConn.Execute("REPLACE INTO modversion (modid, version, url, packing) VALUES (@Id, @Ver, @Url, @Packing)", new { Id = (string)this.ParentId, this.Ver, this.Url, Packing = this.Packing.ToString() }, tx);
+        }
+
+        /// <summary>
+        /// Saves this ModVersion to the database.
+        /// </summary>
         internal void Save()
         {
             using (var dbConn = Database.GetConnection())

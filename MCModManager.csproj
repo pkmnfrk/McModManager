@@ -65,7 +65,6 @@
     <Compile Include="ID.cs">
     </Compile>
     <Compile Include="ModVersion.cs">
-      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="SharpZipLib\BZip2\BZip2.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
