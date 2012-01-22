@@ -95,7 +95,7 @@ namespace MCModManager {
                         version TEXT NOT NULL,
                         depmodid TEXT NOT NULL,
                         depversion TEXT NOT NULL,
-                        PRIMARY KEY (modid, version, depmodid, depversion),
+                        PRIMARY KEY (modid, version, depmodid),
                         FOREIGN KEY (modid, version) REFERENCES modversion(modid, version),
                         FOREIGN KEY (depmodid, depversion) REFERENCES modversion(modid, version)
                     );
