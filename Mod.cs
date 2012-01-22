@@ -23,7 +23,7 @@ namespace MCModManager
         /// <summary>
         /// The namespace the Manifests must live under
         /// </summary>
-        internal static readonly XNamespace Namespace = XNamespace.Get("http://mike-caron.com/McModManager/manifest");
+        internal static readonly XNamespace Namespace = XNamespace.Get("http://mike-caron.com/mod-manager/manifest");
 
         /// <summary>
         /// Cached list of ModVersions

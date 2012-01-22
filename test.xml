@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<manifest xmlns="http://mike-caron.com/McModManager/manifest">
+<manifest xmlns="http://mike-caron.com/mod-manager/manifest">
   <id>base:testmod</id>
   <name>Test Mod</name>
   <versions>
