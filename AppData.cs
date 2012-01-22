@@ -104,7 +104,6 @@ namespace MCModManager
             if (!mods.ContainsKey("base:minecraft"))
             {
                 Mod mc = Mod.LoadFromUrl("base_manifests/minecraft.xml");
-                mc.Save();
                 mods[mc.Id] = mc;
             }
 
@@ -116,8 +115,13 @@ namespace MCModManager
             if (!mods.ContainsKey("base:testmod"))
             {
                 Mod test = Mod.LoadFromUrl("test.xml");
-                test.Save();
                 mods[test.Id] = test;
+            }
+
+            if (!mods.ContainsKey("simo_415:single player commands"))
+            {
+                Mod spc = Mod.LoadFromUrl("singlePlayerCommands.xml");
+                mods[spc.Id] = spc;
             }
         }
 

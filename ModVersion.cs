@@ -197,6 +197,8 @@ namespace MCModManager
 
             ret.Packing = (PackingType)Enum.Parse(typeof(PackingType), packing);
 
+            ret.Url = UrlHelpers.GetRealUrl(ret.Url);
+
             Uri temp = new Uri(ret.Url);
             ret.FileName = Path.GetFileName(temp.AbsolutePath);
 

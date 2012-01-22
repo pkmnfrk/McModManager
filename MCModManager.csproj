@@ -266,6 +266,7 @@
     <Compile Include="libraries\SqlMapper.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
+    <Compile Include="UrlHelpers.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -295,6 +296,9 @@
     </Content>
     <Content Include="libraries\System.Data.SQLite.DLL" />
     <Content Include="libraries\System.Data.SQLite.Linq.dll" />
+    <Content Include="singlePlayerCommands.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="test.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
