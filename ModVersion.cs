@@ -69,9 +69,6 @@ namespace MCModManager {
 
 			dbConn.Execute("REPLACE INTO modversion (modid, version, url, packing) VALUES (@Id, @Ver, @Url, @Packing)", new { Id = (string)ParentId, this.Ver, this.Url, Packing = this.Packing.ToString() }, tx);
 
-			foreach (var dep in Dependencies) {
-				dbConn.Execute("REPLACE INTO moddependency (modid, version, depmodid, depversion) VALUES (@Id, @Ver, @DepId, @DepVer)", new { Id = (string)ParentId, this.Ver, DepId = dep.Root + ":" + dep.Value, DepVer = dep.Version });
-			}
 		}
 
         internal static IEnumerable<ModVersion> GetVersions(ID Id) {
