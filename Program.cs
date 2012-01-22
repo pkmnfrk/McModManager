@@ -1,19 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+﻿//-----------------------------------------------------------------------
+// <copyright file="Program.cs" company="Mike Caron">
+//     using System.Standard.Disclaimer;
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace MCModManager
 {
-    static class Program
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows.Forms;
+
+    /// <summary>
+    /// The entry point to the application
+    /// </summary>
+    internal static class Program
     {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        public static void Main()
         {
-
             AppData.InitAppData();
 
             Application.EnableVisualStyles();

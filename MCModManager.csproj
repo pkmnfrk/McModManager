@@ -154,7 +154,6 @@
     <Compile Include="Mod.cs">
     </Compile>
     <Compile Include="Program.cs">
-      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
