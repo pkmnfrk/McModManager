@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using ICSharpCode.SharpZipLib;
-using ICSharpCode.SharpZipLib.Zip;
-
-namespace MCModManager
+﻿namespace MCModManager
 {
+
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
+    using ICSharpCode.SharpZipLib;
+    using ICSharpCode.SharpZipLib.Zip;
+
     public class Archive
     {
         private ZipFile zip;
