@@ -1,18 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
-using System.Data.SQLite;
-using System.IO;
-using Dapper;
-
+﻿//-----------------------------------------------------------------------
+// <copyright file="Database.cs" company="Mike Caron">
+//     using System.Standard.Disclaimer;
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace MCModManager
 {
-    static class Database
-    {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Data.SQLite;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
 
+    using Dapper;
+
+    /// <summary>
+    /// Helper class for dealing with the database
+    /// </summary>
+    internal static class Database
+    {
+        /// <summary>
+        /// Gets the physical path to the SQLite database
+        /// </summary>
         private static string DatabasePath
         {
             get
@@ -21,6 +32,9 @@ namespace MCModManager
             }
         }
 
+        /// <summary>
+        /// Gets the connection string to open the database
+        /// </summary>
         public static string ConnectionString
         {
             get
@@ -29,6 +43,10 @@ namespace MCModManager
             }
         }
 
+        /// <summary>
+        /// Returns a new connection to the database
+        /// </summary>
+        /// <returns>a new connection to the database</returns>
         internal static IDbConnection GetConnection()
         {
             var ret = new SQLiteConnection(ConnectionString);
@@ -36,6 +54,10 @@ namespace MCModManager
             return ret;
         }
 
+        /// <summary>
+        /// Initializes the database (creating schema, etc)
+        /// </summary>
+        /// <param name="recurse">internal use only</param>
         internal static void InitDatabase(bool recurse = false)
         {
             bool created = false;
@@ -46,15 +68,16 @@ namespace MCModManager
             try
             {
                 dbConn.Open();
-            } catch (SQLiteException ex1)
+            }
+            catch (SQLiteException ex1)
             {
-
                 if (recurse) throw;
                 try
                 {
                     if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
                     if (File.Exists(DatabasePath)) File.Move(DatabasePath, DatabasePath + ".bak");
-                } catch (Exception ex)
+                }
+                catch (Exception ex)
                 {
                     throw new AggregateException(ex1, ex);
                 }
@@ -66,14 +89,14 @@ namespace MCModManager
 
             try
             {
-
                 if (version < 1)
                 {
                     DatabaseVersion1(dbConn);
                     version = 1;
                 }
                 dbConn.Close();
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 dbConn.Close();
                 if (!created)
@@ -86,12 +109,14 @@ namespace MCModManager
 
         }
 
-
+        /// <summary>
+        /// Version 1 of the database schema
+        /// </summary>
+        /// <param name="dbConn">database connection</param>
         private static void DatabaseVersion1(SQLiteConnection dbConn)
         {
             using (var tx = dbConn.BeginTransaction())
             {
-
                 dbConn.Execute(@"
 					CREATE TABLE mod (
 						id TEXT NOT NULL PRIMARY KEY,
