@@ -142,6 +142,10 @@ namespace MCModManager
             ret.ParentId = parent.Id;
             ret.Url = ver.Element(ns.GetName("url")).Value;
             ret.Ver = ver.Element(ns.GetName("ver")).Value;
+            if (ver.Element(ns.GetName("hash")) != null)
+            {
+                ret.Hash = ver.Element(ns.GetName("hash")).Value;
+            }
 
             var packing = ver.Element(ns.GetName("packing")).Value.ToLower();
 
