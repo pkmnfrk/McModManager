@@ -22,17 +22,6 @@ namespace MCModManager
     internal static class Database
     {
         /// <summary>
-        /// Gets the physical path to the SQLite database
-        /// </summary>
-        private static string DatabasePath
-        {
-            get
-            {
-                return Path.Combine(AppData.AppDataPath, "data.db");
-            }
-        }
-
-        /// <summary>
         /// Gets the connection string to open the database
         /// </summary>
         public static string ConnectionString
@@ -40,6 +29,17 @@ namespace MCModManager
             get
             {
                 return "Data Source=" + DatabasePath;
+            }
+        }
+
+        /// <summary>
+        /// Gets the physical path to the SQLite database
+        /// </summary>
+        private static string DatabasePath
+        {
+            get
+            {
+                return Path.Combine(AppData.AppDataPath, "data.db");
             }
         }
 
@@ -63,7 +63,7 @@ namespace MCModManager
             bool created = false;
             var dbConn = new SQLiteConnection(ConnectionString);
 
-            //File.Delete(DatabasePath);
+            ////File.Delete(DatabasePath);
 
             try
             {
@@ -71,16 +71,28 @@ namespace MCModManager
             }
             catch (SQLiteException ex1)
             {
-                if (recurse) throw;
+                if (recurse)
+                {
+                    throw;
+                }
+
                 try
                 {
-                    if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
-                    if (File.Exists(DatabasePath)) File.Move(DatabasePath, DatabasePath + ".bak");
+                    if (File.Exists(DatabasePath + ".bak"))
+                    {
+                        File.Delete(DatabasePath + ".bak");
+                    }
+
+                    if (File.Exists(DatabasePath))
+                    {
+                        File.Move(DatabasePath, DatabasePath + ".bak");
+                    }
                 }
                 catch (Exception ex)
                 {
                     throw new AggregateException(ex1, ex);
                 }
+
                 dbConn.Open();
                 created = true;
             }
@@ -94,6 +106,7 @@ namespace MCModManager
                     DatabaseVersion1(dbConn);
                     version = 1;
                 }
+
                 dbConn.Close();
             }
             catch (Exception)
@@ -101,12 +114,19 @@ namespace MCModManager
                 dbConn.Close();
                 if (!created)
                 {
-                    if (File.Exists(DatabasePath + ".bak")) File.Delete(DatabasePath + ".bak");
-                    if (File.Exists(DatabasePath)) File.Move(DatabasePath, DatabasePath + ".bak");
+                    if (File.Exists(DatabasePath + ".bak"))
+                    {
+                        File.Delete(DatabasePath + ".bak");
+                    }
+
+                    if (File.Exists(DatabasePath))
+                    {
+                        File.Move(DatabasePath, DatabasePath + ".bak");
+                    }
+
                     InitDatabase(true);
                 }
             }
-
         }
 
         /// <summary>
