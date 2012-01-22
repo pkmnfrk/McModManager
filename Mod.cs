@@ -12,19 +12,19 @@ namespace MCModManager {
         public ID Id { get; set; }
         public string Name { get; set; }
         public string Url { get; set; }
-        public IList<ModVersion> Versions { get; set; }
+
+        private IList<ModVersion> versions;
+        public IEnumerable<ModVersion> Versions {
+            get {
+                if (versions == null) versions = ModVersion.GetVersions(Id).ToList();
+                return versions;
+            }
+        }
 
         internal static readonly XNamespace ns = XNamespace.Get("http://mike-caron.com/McModManager/manifest");
 
         public Mod() {
-            Versions = new List<ModVersion>();
-        }
-
-        private Mod(IEnumerable<ModVersion> versions) :this() {
-            foreach (var v in versions) {
-                v.parent = this;
-                Versions.Add(v);
-            }
+            
         }
 
         public Mod(string uri) : this() {
@@ -39,29 +39,25 @@ namespace MCModManager {
 
             if (this.Id.Version != null) throw new Exception("Manifest IDs cannot include versions");
 
+            if(manifest.Root.Element(ns.GetName("url")) != null)
+                this.Url = manifest.Root.Element(ns.GetName("url")).Value;
+
             foreach (var ver in manifest.Root.Element(ns.GetName("versions")).Elements(ns.GetName("version"))) {
-                var v = ModVersion.LoadVersion(ver);
-                v.parent = this;
-                this.Versions.Add(v);
+                var v = ModVersion.LoadVersion(this, ver);
+                v.Save();
             }
         }
 
         public static IEnumerable<Mod> LoadMods() {
 
             using (var dbConn = Database.GetConnection()) {
-                var deps = dbConn.Query("SELECT modid, version, depmodid, depversion FROM moddependency");
-                var versions = dbConn.Query("SELECT modid, version, url, packing FROM modversion");
                 
                 return dbConn.Query("SELECT Id, Name, Url FROM mod")
-                             .Select(m => new Mod(versions.Where(v => v.modid == m.id).Select(v => new ModVersion(deps.Where(d => d.modid == m.id && d.version == v.version).Select<dynamic, ID>(d => ID.MakeID(d.depmodid, d.depversion))) {
-                                 Ver = v.version,
-                                 Url = v.url,
-                                 Packing = (ModVersion.PackingType)Enum.Parse(typeof(ModVersion.PackingType), v.packing)
-                             })) {
+                             .Select(m => new Mod {
                                  Id = m.id,
                                  Name = m.name,
                                  Url = m.url,
-                             }).ToList();
+                             });
             }
 
         }
@@ -72,10 +68,6 @@ namespace MCModManager {
                 
                 dbConn.Execute("REPLACE INTO mod (id, name, url) VALUES (@Id, @Name, @Url)", new { Id = (string)this.Id, this.Name, this.Url }, tx);
 
-                foreach (var version in Versions) {
-                    version.Save(dbConn, tx);
-                }
-
                 tx.Commit();
             }
         }
@@ -84,6 +76,9 @@ namespace MCModManager {
             return new Mod(uri);
         }
 
+        public override string ToString() {
+            return string.Format("{0} - {1} ({2})", this.Id, this.Name, this.Url);
+        }
         
     }
 }

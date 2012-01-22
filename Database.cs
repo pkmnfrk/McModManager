@@ -33,6 +33,8 @@ namespace MCModManager {
             bool created = false;
             var dbConn = new SQLiteConnection(ConnectionString);
 
+            //File.Delete(DatabasePath);
+
             try {
                 dbConn.Open();
             } catch (SQLiteException ex1) {
