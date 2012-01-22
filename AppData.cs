@@ -108,6 +108,11 @@ namespace MCModManager
                 mods[mc.Id] = mc;
             }
 
+            if (!mods["base:minecraft"].Versions.First().IsDownloaded)
+            {
+                mods["base:minecraft"].Versions.First().Download();
+            }
+
             if (!mods.ContainsKey("base:testmod"))
             {
                 Mod test = Mod.LoadFromUrl("test.xml");

@@ -11,6 +11,7 @@ namespace MCModManager
     using System.Data;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Text;
     using System.Xml.Linq;
     
@@ -254,6 +255,27 @@ namespace MCModManager
         /// </summary>
         internal void Download()
         {
+            if (this.IsDownloaded)
+            {
+                if (this.Hash != this.FileHash)
+                {
+                    File.Delete(Path.Combine(this.CachePath, this.FileName));
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            // if the url isn't http, this will fail (which is good)
+            var client = new WebClient();
+
+            if (!Directory.Exists(this.CachePath))
+            {
+                Directory.CreateDirectory(this.CachePath);
+            }
+
+            client.DownloadFile(this.Url, Path.Combine(this.CachePath, this.FileName));
         }
     }
 }
