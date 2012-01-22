@@ -12,6 +12,7 @@ namespace MCModManager
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Windows.Forms;
 
     using Dapper;
@@ -49,7 +50,7 @@ namespace MCModManager
         /// <summary>
         /// Gets the path to our archives folder (Something like %AppDataPath%\archives
         /// </summary>
-        private static string ArchivesPath
+        internal static string ArchivesPath
         {
             get
             {
@@ -120,9 +121,13 @@ namespace MCModManager
         /// </summary>
         /// <param name="mod">the Id of the mod</param>
         /// <returns>The path to a specific Mod's folder</returns>
-        private static string ModArchivePath(ID mod)
+        internal static string ModArchivePath(ID mod)
         {
-            return Path.Combine(ArchivesPath, mod);
+            string root = Regex.Replace(mod.Root, @"[^\w]", "_");
+            string value = Regex.Replace(mod.Value, @"[^\w]", "_");
+            string ver = Regex.Replace(mod.Version, @"[^\w]", "_");
+
+            return Path.Combine(ArchivesPath, root, value, ver);
         }
     }
 }

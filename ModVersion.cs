@@ -9,6 +9,7 @@ namespace MCModManager
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.IO;
     using System.Linq;
     using System.Text;
     using System.Xml.Linq;
@@ -70,6 +71,33 @@ namespace MCModManager
         /// Gets the packing value for this version, which determines how it is meant to be installed
         /// </summary>
         public PackingType Packing { get; private set; }
+
+        /// <summary>
+        /// Gets the stored MD5 hash value for this file
+        /// </summary>
+        public string Hash { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the mod has been downloaded or not
+        /// </summary>
+        public bool IsDownloaded
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets the physical path to the modversion's cache
+        /// </summary>
+        public string CachePath
+        {
+            get
+            {
+                return AppData.ModArchivePath(ID.MakeID(this.ParentId, this.Ver));
+            }
+        }
 
         /// <summary>
         /// Gets the list of mods on which this mod is dependent to work correctly

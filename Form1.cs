@@ -49,6 +49,9 @@ namespace MCModManager
                     {
                         new TreeNode("Url: " + ver.Url),
                         new TreeNode("Packing: " + ver.Packing),
+                        new TreeNode("Hash: " + ver.Hash),
+                        new TreeNode("Is Downloaded: " + ver.IsDownloaded),
+                        new TreeNode("Cache Path: " + ver.CachePath),
                     };
 
                     var tvwVer = new TreeNode(ver.Ver, tvwVerSubnodes);

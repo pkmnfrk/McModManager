@@ -58,6 +58,8 @@ namespace MCModManager
             {
                 ID tmp = Parse(root);
                 root = tmp.Root;
+                version = value;
+                value = tmp.Value;
             }
 
             return new ID { Root = root, Value = value, Version = version };
