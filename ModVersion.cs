@@ -78,13 +78,39 @@ namespace MCModManager
         public string Hash { get; private set; }
 
         /// <summary>
+        /// Gets the actual MD5 hash value for the downloaded file
+        /// </summary>
+        public string FileHash
+        {
+            get
+            {
+                if (!this.IsDownloaded)
+                {
+                    throw new InvalidOperationException("The file must be downloaded to compute its hash.");
+                }
+
+                return string.Empty;
+            }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the mod has been downloaded or not
         /// </summary>
         public bool IsDownloaded
         {
             get
             {
-                return false;
+                if (!Directory.Exists(this.CachePath))
+                {
+                    return false;
+                }
+
+                if (!File.Exists(Path.Combine(this.CachePath, this.FileName)))
+                {
+                    return false;
+                }
+
+                return true;
             }
         }
 
@@ -98,6 +124,11 @@ namespace MCModManager
                 return AppData.ModArchivePath(ID.MakeID(this.ParentId, this.Ver));
             }
         }
+
+        /// <summary>
+        /// Gets name of the mod file
+        /// </summary>
+        public string FileName { get; private set; }
 
         /// <summary>
         /// Gets the list of mods on which this mod is dependent to work correctly
@@ -151,8 +182,18 @@ namespace MCModManager
 
             ret.Packing = (PackingType)Enum.Parse(typeof(PackingType), packing);
 
+            Uri temp = new Uri(ret.Url);
+            ret.FileName = Path.GetFileName(temp.AbsolutePath);
+
+            if (string.IsNullOrEmpty(ret.FileName))
+            {
+                ret.FileName = "mod.zip";
+            }
+
             using (var dbConn = Database.GetConnection())
             {
+                ret.Save(dbConn);
+
                 if (ver.Element(ns.GetName("depends")) != null)
                 {
                     foreach (var dep in ver.Element(ns.GetName("depends")).Elements(ns.GetName("depend")).Select(d => ID.Parse(d)))
@@ -174,13 +215,15 @@ namespace MCModManager
         {
             using (var dbConn = Database.GetConnection())
             {
-                return dbConn.Query("SELECT version,url,packing FROM ModVersion WHERE ModId = @Id", new { Id = (string)id })
+                return dbConn.Query("SELECT version, url, packing, hash, filename FROM ModVersion WHERE ModId = @Id", new { Id = (string)id })
                     .Select(v => new ModVersion
                     {
                         ParentId = id,
                         Ver = v.version,
                         Url = v.url,
                         Packing = Enum.Parse(typeof(PackingType), v.packing),
+                        Hash = v.hash,
+                        FileName = v.filename
                     });
             }
         }
@@ -192,7 +235,7 @@ namespace MCModManager
         /// <param name="tx">the Transaction scope</param>
         internal void Save(IDbConnection dbConn, IDbTransaction tx = null)
         {
-            dbConn.Execute("REPLACE INTO modversion (modid, version, url, packing) VALUES (@Id, @Ver, @Url, @Packing)", new { Id = (string)this.ParentId, this.Ver, this.Url, Packing = this.Packing.ToString() }, tx);
+            dbConn.Execute("REPLACE INTO modversion (modid, version, url, packing, hash, filename) VALUES (@Id, @Ver, @Url, @Packing, @Hash, @FileName)", new { Id = (string)this.ParentId, this.Ver, this.Url, Packing = this.Packing.ToString(), this.Hash, this.FileName }, tx);
         }
 
         /// <summary>
@@ -204,6 +247,13 @@ namespace MCModManager
             {
                 this.Save(dbConn);
             }
+        }
+
+        /// <summary>
+        /// Downloads the file if it already hasn't been
+        /// </summary>
+        internal void Download()
+        {
         }
     }
 }

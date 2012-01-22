@@ -150,6 +150,7 @@ namespace MCModManager
 						url TEXT NOT NULL,
 						packing TEXT NOT NULL,
                         hash TEXT NULL,
+                        filename TEXT NOT NULL,
 						PRIMARY KEY (modid, version),
 						FOREIGN KEY (modid) REFERENCES mod(id)
 					);

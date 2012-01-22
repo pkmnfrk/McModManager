@@ -48,6 +48,7 @@ namespace MCModManager
                     var tvwVerSubnodes = new[]
                     {
                         new TreeNode("Url: " + ver.Url),
+                        new TreeNode("File Name: " + ver.FileName),
                         new TreeNode("Packing: " + ver.Packing),
                         new TreeNode("Hash: " + ver.Hash),
                         new TreeNode("Is Downloaded: " + ver.IsDownloaded),
