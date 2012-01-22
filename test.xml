@@ -9,6 +9,7 @@
       <packing>modloader</packing>
       <depends>
         <depend>base:minecraft#1.1</depend>
+        <depend>pkmnfrks mods:someothermod#1.2</depend>
       </depends>
     </version>
   </versions>
