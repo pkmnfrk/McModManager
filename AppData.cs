@@ -1,24 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-
-using Dapper;
-using System.Data;
-using System.Windows.Forms;
+﻿//-----------------------------------------------------------------------
+// <copyright file="AppData.cs" company="Mike Caron">
+//     using System.Standard.Disclaimer;
+// </copyright>
+//-----------------------------------------------------------------------
 
 namespace MCModManager
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
+    using System.Windows.Forms;
+
+    using Dapper;
+
+    /// <summary>
+    /// Everything relating our local cache of data, including a list of mods
+    /// </summary>
     internal static class AppData
     {
-
+        /// <summary>
+        /// list of all mods we know about
+        /// </summary>
         private static Dictionary<ID, Mod> mods = new Dictionary<ID, Mod>();
+
+        /// <summary>
+        /// Gets a list of all mods we know about
+        /// </summary>
         public static Dictionary<ID, Mod> Mods
         {
             get { return mods; }
         }
 
+        /// <summary>
+        /// Gets the path to our App Data folder (usually something like
+        /// c:\Users\Mike\AppData\Roaming\McModManager)
+        /// </summary>
         internal static string AppDataPath
         {
             get
@@ -27,6 +46,9 @@ namespace MCModManager
             }
         }
 
+        /// <summary>
+        /// Gets the path to our archives folder (Something like %AppDataPath%\archives
+        /// </summary>
         private static string ArchivesPath
         {
             get
@@ -35,25 +57,9 @@ namespace MCModManager
             }
         }
 
-        private static string ModArchivePath(string mod)
-        {
-            return Path.Combine(ArchivesPath, mod);
-        }
-
-
-
-        public static Mod LookupMod(ID id)
-        {
-            if (Mods.ContainsKey(id))
-            {
-                return Mods[id];
-            }
-
-            return null;
-        }
-
-
-
+        /// <summary>
+        /// Ensures our Appdata folder is set up, loads the databse, etc.
+        /// </summary>
         public static void InitAppData()
         {
             try
@@ -67,15 +73,18 @@ namespace MCModManager
                 {
                     Directory.CreateDirectory(ArchivesPath);
                 }
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Could not create the application data folder. Please ensure you have permission to write to '" + AppDataPath + "'.\n\nThe original error was:\n\n" + ex.ToString());
                 Environment.Exit(1);
             }
+
             try
             {
                 Database.InitDatabase();
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Could initialize the application database. Please ensure you have permission to write to '" + AppDataPath + "'.\n\nThe original error was:\n\n" + ex.ToString());
                 Environment.Exit(1);
@@ -84,7 +93,8 @@ namespace MCModManager
             try
             {
                 mods = Mod.LoadMods().ToDictionary(k => k.Id);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("Could not load the list of mods from the database. Please ensure you have permission to write to '" + AppDataPath + "'.\n\nThe original error was:\n\n" + ex.ToString());
                 Environment.Exit(1);
@@ -103,7 +113,16 @@ namespace MCModManager
                 test.Save();
                 mods[test.Id] = test;
             }
+        }
 
+        /// <summary>
+        /// Gets the path to a specific Mod's folder
+        /// </summary>
+        /// <param name="mod">the Id of the mod</param>
+        /// <returns>The path to a specific Mod's folder</returns>
+        private static string ModArchivePath(ID mod)
+        {
+            return Path.Combine(ArchivesPath, mod);
         }
     }
 }
