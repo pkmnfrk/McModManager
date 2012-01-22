@@ -57,9 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppData.cs">
-	</Compile>
+    </Compile>
     <Compile Include="Archive.cs">
-	</Compile>
+    </Compile>
     <Compile Include="Database.cs">
     </Compile>
     <Compile Include="ID.cs">
@@ -127,11 +127,10 @@
     </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
-	  <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
-	  <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="SharpZipLib\GZip\GZIPConstants.cs">
       <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
