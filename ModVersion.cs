@@ -12,6 +12,7 @@ namespace MCModManager
     using System.IO;
     using System.Linq;
     using System.Net;
+    using System.Security.Cryptography;
     using System.Text;
     using System.Xml.Linq;
     
@@ -90,7 +91,20 @@ namespace MCModManager
                     throw new InvalidOperationException("The file must be downloaded to compute its hash.");
                 }
 
-                return string.Empty;
+                using (MD5 md5 = MD5.Create())
+                using (var fs = File.OpenRead(Path.Combine(this.CachePath, this.FileName)))
+                {
+                    var bytes = md5.ComputeHash(fs);
+
+                    StringBuilder hash = new StringBuilder();
+
+                    for (int i = 0; i < bytes.Length; i++)
+                    {
+                        hash.AppendFormat("{0:x}", bytes[i]);
+                    }
+
+                    return hash.ToString();
+                }
             }
         }
 
@@ -176,7 +190,7 @@ namespace MCModManager
             ret.Ver = ver.Element(ns.GetName("ver")).Value;
             if (ver.Element(ns.GetName("hash")) != null)
             {
-                ret.Hash = ver.Element(ns.GetName("hash")).Value;
+                ret.Hash = ver.Element(ns.GetName("hash")).Value.ToLower();
             }
 
             var packing = ver.Element(ns.GetName("packing")).Value.ToLower();
@@ -276,6 +290,11 @@ namespace MCModManager
             }
 
             client.DownloadFile(this.Url, Path.Combine(this.CachePath, this.FileName));
+
+            if (string.IsNullOrEmpty(this.Hash))
+            {
+                this.Hash = this.FileHash;
+            }
         }
     }
 }
