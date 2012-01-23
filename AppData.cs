@@ -59,6 +59,17 @@ namespace MCModManager
         }
 
         /// <summary>
+        /// Gets the path to our temp folder (%AppDataPath%\temp)
+        /// </summary>
+        internal static string TempPath
+        {
+            get
+            {
+                return Path.Combine(AppDataPath, "temp");
+            }
+        }
+
+        /// <summary>
         /// Ensures our Appdata folder is set up, loads the databse, etc.
         /// </summary>
         public static void InitAppData()
@@ -73,6 +84,11 @@ namespace MCModManager
                 if (!Directory.Exists(ArchivesPath))
                 {
                     Directory.CreateDirectory(ArchivesPath);
+                }
+
+                if (!Directory.Exists(TempPath))
+                {
+                    Directory.CreateDirectory(TempPath);
                 }
             }
             catch (Exception ex)
@@ -118,6 +134,11 @@ namespace MCModManager
                         catch (Exception)
                         {
                         }
+                    }
+
+                    if (v.IsDownloaded)
+                    {
+                        v.AnalyzeMod();
                     }
                 }
             }

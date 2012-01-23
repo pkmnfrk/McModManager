@@ -132,13 +132,13 @@ namespace MCModManager
         public string FileName { get; private set; }
 
         /// <summary>
-        /// The fully qualified path to the mod file
+        /// Gets the fully qualified path to the mod file
         /// </summary>
         public string FullPath
         {
             get
             {
-                return Path.Combine(this.CachePath, this.FullPath);
+                return Path.Combine(this.CachePath, this.FileName);
             }
         }
 
@@ -199,6 +199,25 @@ namespace MCModManager
             if (!this.IsDownloaded)
             {
                 throw new InvalidOperationException("Cannot analyze the Mod if it's not downloaded");
+            }
+
+            var archive = new Archive(this.FullPath);
+
+            using (var dbConn = Database.GetConnection())
+            using (var tx = dbConn.BeginTransaction())
+            {
+                foreach (var entry in archive.ClassEntries)
+                {
+                    string hash;
+                    using (var s = entry.OpenToRead())
+                    {
+                        hash = MD5.Hash(s);
+                    }
+
+                    dbConn.Execute(@"REPLACE INTO modclass(modid, version, file, hash) VALUES (@Modid, @Version, @File, @Hash)", new { Modid = this.ParentId.ToString(), Version = this.Ver, File = entry.Name, Hash = hash }, tx);
+                }
+
+                tx.Commit();
             }
         }
 
