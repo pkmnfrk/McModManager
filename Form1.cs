@@ -30,66 +30,31 @@ namespace MCModManager
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            treeView1.BeginUpdate();
-            foreach (var mod in AppData.Mods.Values)
+            lstMods.BeginUpdate();
+            foreach (Mod m in AppData.Mods.Values)
             {
-                var tvwModSubnodes = new[]
+                var lvi = new ListViewItem(m.ToString());
+                lvi.Tag = m;
+
+                if (m.IsMinecraftJar)
                 {
-                    new TreeNode("ID: " + mod.Id),
-                    new TreeNode("Url: " + mod.Url),
-                };
-
-                var tvwMod = new TreeNode(mod.Name, tvwModSubnodes);
-                var tvwModVer = new TreeNode("Versions:");
-                tvwMod.Nodes.Add(tvwModVer);
-
-                foreach (var ver in mod.Versions)
-                {
-                    var tvwVerSubnodes = new[]
-                    {
-                        new TreeNode("Url: " + ver.Url),
-                        new TreeNode("File Name: " + ver.FileName),
-                        new TreeNode("Packing: " + ver.Packing),
-                        new TreeNode("Hash: " + ver.Hash),
-                        new TreeNode("Is Downloaded: " + ver.IsDownloaded),
-                        new TreeNode("Cache Path: " + ver.CachePath),
-                    };
-
-                    var tvwVer = new TreeNode(ver.Ver, tvwVerSubnodes);
-
-                    if (ver.IsDownloaded)
-                    {
-                        tvwVer.Nodes.Add("File Hash: " + ver.FileHash);
-                    }
-
-                    var tvwVerDep = new TreeNode("Dependencies:");
-                    tvwVer.Nodes.Add(tvwVerDep);
-
-                    foreach (var dep in ver.Dependencies)
-                    {
-                        var tvwDep = new TreeNode(dep.ToString());
-                        tvwVerDep.Nodes.Add(tvwDep);
-                    }
-
-                    if (tvwVerDep.Nodes.Count == 0)
-                    {
-                        tvwVerDep.Nodes.Add(new TreeNode("None") { NodeFont = new Font(treeView1.Font, FontStyle.Italic) });
-                    }
-
-                    tvwModVer.Nodes.Add(tvwVer);
+                    lvi.Checked = true;
+                    lvi.ToolTipText = "This isn't a mod, it's Minecraft itself. Thus, it cannot be deselected";
                 }
 
-                treeView1.Nodes.Add(tvwMod);
+                lstMods.Items.Add(lvi);
             }
 
-            treeView1.EndUpdate();
+            lstMods.EndUpdate();
         }
 
-        private void TreeView1_KeyDown(object sender, KeyEventArgs e)
+        private void LstMods_ItemCheck(object sender, ItemCheckEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.C)
+            Mod m = lstMods.Items[e.Index].Tag as Mod;
+
+            if (m.IsMinecraftJar)
             {
-                Clipboard.SetText(treeView1.SelectedNode.Text);
+                e.NewValue = CheckState.Checked;
             }
         }
     }

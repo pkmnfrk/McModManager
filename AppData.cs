@@ -121,7 +121,7 @@ namespace MCModManager
                 Environment.Exit(1);
             }
 
-            foreach (Mod m in Mods.Values)
+            /*foreach (Mod m in Mods.Values)
             {
                 foreach (ModVersion v in m.Versions)
                 {
@@ -141,7 +141,7 @@ namespace MCModManager
                         v.AnalyzeMod();
                     }
                 }
-            }
+            }*/
         }
 
         /// <summary>

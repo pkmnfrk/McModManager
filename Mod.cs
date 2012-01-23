@@ -69,6 +69,17 @@ namespace MCModManager
         }
 
         /// <summary>
+        /// Gets a value indicating whether this Mod is actually Minecraft.Jar
+        /// </summary>
+        public bool IsMinecraftJar
+        {
+            get
+            {
+                return this.Id == "base:minecraft";
+            }
+        }
+
+        /// <summary>
         /// Returns a list of all Mods in the database
         /// </summary>
         /// <returns>a list of all Mods in the database</returns>
@@ -160,7 +171,7 @@ namespace MCModManager
         /// <returns>a string representing this Mod</returns>
         public override string ToString()
         {
-            return string.Format("{0} - {1} ({2})", this.Id, this.Name, this.Url);
+            return string.Format("{0} {1}", this.Name, this.Versions.Last().Ver);
         }
     }
 }
