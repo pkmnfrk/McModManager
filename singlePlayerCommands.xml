@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<manifest xmlns="http://mike-caron.com/mod-manager/manifest">
+  <id>simo_415:single player commands</id>
+  <name>Single Player Commands</name>
+  <versions>
+    <version>
+      <url>http://adf.ly/42jTo</url>
+      <ver>3.0.1</ver>
+      <packing>raw</packing>
+      <depends>
+        <depend>base:minecraft#1.0</depend>
+      </depends>
+      <hash>3b4deea7cda4277c81c48c22faba4ad8</hash>
+    </version>
+    <version>
+      <url>http://adf.ly/4jcYu</url>
+      <ver>3.1</ver>
+      <packing>raw</packing>
+      <depends>
+        <depend>base:minecraft#1.1</depend>
+      </depends>
+      <hash>c8952052bd8ca7079352faf4ebc6b8</hash>
+    </version>
+  </versions>
+</manifest>

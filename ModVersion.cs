@@ -12,7 +12,6 @@ namespace MCModManager
     using System.IO;
     using System.Linq;
     using System.Net;
-    using System.Security.Cryptography;
     using System.Text;
     using System.Xml.Linq;
     
@@ -91,20 +90,7 @@ namespace MCModManager
                     throw new InvalidOperationException("The file must be downloaded to compute its hash.");
                 }
 
-                using (MD5 md5 = MD5.Create())
-                using (var fs = File.OpenRead(Path.Combine(this.CachePath, this.FileName)))
-                {
-                    var bytes = md5.ComputeHash(fs);
-
-                    StringBuilder hash = new StringBuilder();
-
-                    for (int i = 0; i < bytes.Length; i++)
-                    {
-                        hash.AppendFormat("{0:x}", bytes[i]);
-                    }
-
-                    return hash.ToString();
-                }
+                return MD5.Hash(this.FullPath);
             }
         }
 
@@ -120,7 +106,7 @@ namespace MCModManager
                     return false;
                 }
 
-                if (!File.Exists(Path.Combine(this.CachePath, this.FileName)))
+                if (!File.Exists(this.FullPath))
                 {
                     return false;
                 }
@@ -144,6 +130,17 @@ namespace MCModManager
         /// Gets name of the mod file
         /// </summary>
         public string FileName { get; private set; }
+
+        /// <summary>
+        /// The fully qualified path to the mod file
+        /// </summary>
+        public string FullPath
+        {
+            get
+            {
+                return Path.Combine(this.CachePath, this.FullPath);
+            }
+        }
 
         /// <summary>
         /// Gets the list of mods on which this mod is dependent to work correctly
@@ -192,6 +189,17 @@ namespace MCModManager
         public override string ToString()
         {
             return string.Format("{{{0}, {1}}}", this.Ver, this.Url);
+        }
+
+        /// <summary>
+        /// Reads info about the mod (file hashes, etc)
+        /// </summary>
+        public void AnalyzeMod()
+        {
+            if (!this.IsDownloaded)
+            {
+                throw new InvalidOperationException("Cannot analyze the Mod if it's not downloaded");
+            }
         }
 
         /// <summary>
@@ -295,7 +303,7 @@ namespace MCModManager
             {
                 if (this.Hash != this.FileHash)
                 {
-                    File.Delete(Path.Combine(this.CachePath, this.FileName));
+                    File.Delete(this.FullPath);
                 }
                 else
                 {
@@ -311,7 +319,7 @@ namespace MCModManager
                 Directory.CreateDirectory(this.CachePath);
             }
 
-            client.DownloadFile(this.Url, Path.Combine(this.CachePath, this.FileName));
+            client.DownloadFile(this.Url, this.FullPath);
 
             if (string.IsNullOrEmpty(this.Hash))
             {

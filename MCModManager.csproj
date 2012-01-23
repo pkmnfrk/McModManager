@@ -64,6 +64,7 @@
     </Compile>
     <Compile Include="ID.cs">
     </Compile>
+    <Compile Include="MD5.cs" />
     <Compile Include="ModVersion.cs">
     </Compile>
     <Compile Include="SharpZipLib\BZip2\BZip2.cs">
