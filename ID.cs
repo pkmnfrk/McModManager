@@ -229,5 +229,14 @@ namespace MCModManager
 
             return ret;
         }
+
+        /// <summary>
+        /// Returns an ID with only the Root and Value parameters set
+        /// </summary>
+        /// <returns>an ID with only the Root and Value parameters set</returns>
+        public ID OnlyValue()
+        {
+            return ID.MakeID(this.Root, this.Value);
+        }
     }
 }
